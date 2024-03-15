@@ -29,9 +29,59 @@ size_t Size(void* ptr)
 
 // implement merge sort
 // extraMemoryAllocated counts bytes of extra memory allocated
+void merge(int pData[], int l, int m, int r)
+{
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    
+    // Create temp arrays
+    int *L = (int *)Alloc(sizeof(int) * n1);
+    int *R = (int *)Alloc(sizeof(int) * n2);
+    
+    // Copy data to temporary arrays
+    memcpy(L, &pData[l], sizeof(int) * n1);
+    memcpy(R, &pData[m + 1], sizeof(int) * n2);
+    
+    // Merge arrays 
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            pData[k] = L[i];
+            i++;
+        } else {
+            pData[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    
+    while (i < n1) {
+        pData[k] = L[i];
+        i++;
+        k++;
+    }
+    
+    while (j < n2) {
+        pData[k] = R[j];
+        j++;
+        k++;
+    }
+    
+    // Free temporary arrays
+    DeAlloc(L);
+    DeAlloc(R);
+}
+
 void mergeSort(int pData[], int l, int r)
 {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(pData, l, m);
+        mergeSort(pData, m + 1, r);
+        merge(pData, l, m, r);
+    }
 }
+
 
 // parses input file to an integer array
 int parseData(char *inputFileName, int **ppData)
